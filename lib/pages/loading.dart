@@ -1,7 +1,7 @@
-import 'dart:convert';
-
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:worldtime/services/world_time.dart';
 
 
 class Loading extends StatefulWidget {
@@ -15,23 +15,36 @@ class _LoadingState extends State<Loading> {
 
 
 
-  void getTime() async {
-    var url = Uri.parse("http://worldtimeapi.org/api/timezone/Africa/Lagos");
-    var response = await get(url);
+  void setupWorldTime() async{
+    WorldTime instance = WorldTime(location: 'Lagos',flag: 'Nigeria.png', rrl:'Africa/Lagos');
 
-    print(response.body);
+    await instance.getTime();
+
+    Navigator.pushReplacementNamed(context, '/home', arguments: {
+      'location': instance.location,
+      'flag' : instance.flag,
+      'time' : instance.time,
+    });
+
   }
+
 
   @override
   void initState() {
     super.initState();
-    getTime();
+    setupWorldTime();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text('Loading screen'),
+      backgroundColor: Colors.orange[500],
+     body: Center(
+       child:  SpinKitCircle(
+         color: Colors.white,
+         size: 50.0,
+       ),
+     ),
     );
   }
 }
